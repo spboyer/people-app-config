@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peoplesvc
+  labels:
+    app: peoplesvc
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: peoplesvc
+      labels:
+        app: peoplesvc
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": windows
+      containers:
+      - name: peoplesvc
+        image: shayne.azurecr.io/peopleservice:latest
+        resources:
+          # limits:
+          #   cpu: 1
+          #   memory: 800m
+          # requests:
+          #   cpu: 1
+          #   memory: 300m
+        ports:
+          - containerPort: 80
+  selector:
+    matchLabels:
+      app: peoplesvc
+---
+ apiVersion: v1
+ kind: Service
+ metadata:
+   name: peoplesvc
+ spec:
+   type: ClusterIP
+   externalName: peoplesvc
+   ports:
+   - protocol: TCP
+     port: 80
+   selector:
+     app: peoplesvc
